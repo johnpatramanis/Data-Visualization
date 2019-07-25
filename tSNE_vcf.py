@@ -90,7 +90,7 @@ print(len(genotypes),len(genotypes[0]))
 X = np.asarray(genotypes)  
 pca_for_tSNE = PCA(n_components=20).fit_transform(genotypes)
 
-WEIGHTS=(PCA(n_components=20).fit(genotypes).explained_variance_)
+WEIGHTS=(PCA(n_components=50).fit(genotypes).explained_variance_)
 print(WEIGHTS)
 
 
@@ -99,8 +99,7 @@ def weighted_dist(a,b):
     distance = math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
     return distance
     
-print(weighted_dist(pca_for_tSNE[0],pca_for_tSNE[50]))    
-print(weighted_dist(pca_for_tSNE[0],pca_for_tSNE[1]))    
+
 
 
 
@@ -139,9 +138,9 @@ X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perpl
 # Second version of tSNE, weighted distance
 
 X = np.asarray(genotypes)  
-pca_for_tSNE = PCA(n_components=20).fit_transform(genotypes)
+pca_for_tSNE = PCA(n_components=50).fit_transform(genotypes)
 
-X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0,metric=weighted_dist()).fit_transform(pca_for_tSNE) 
+X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0,metric=lambda X, Y: math.sqrt(sum([((X[x] - Y[x])*WEIGHTS[x]) ** 2 for x in range(0,len(WEIGHTS))])) ).fit_transform(pca_for_tSNE) 
 #print(X_embedded.shape)   
 
 
