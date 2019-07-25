@@ -6,6 +6,9 @@ import os
 import time
 import re
 import random
+import numba
+import umap
+
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -21,11 +24,16 @@ from bokeh.io import output_file
 from bokeh import colors
 
 
+
+
 parser = argparse.ArgumentParser()  
 parser.add_argument('--vcf',nargs='+',type=str)
 args = parser.parse_args()
 
 vcf=open(args.vcf[0])
+
+
+
 
 
 def get_spaced_colors(n):
@@ -70,11 +78,36 @@ for line in vcf:
                 genotypes[counter].append(9)
             counter+=1
 
-print(len(genotypes),len(genotypes[0]))            
+print(len(genotypes),len(genotypes[0]))     
+
+
+
+
+####################################################################################################################################################
+####################################################################################################################################################
+       
 #TRANSFORM TO tSNE
-X = np.asarray(genotypes)    
-X_embedded = TSNE(n_components=2,learning_rate=10.0,n_iter=1000,perplexity=5.0).fit_transform(X)    
+X = np.asarray(genotypes)  
+pca_for_tSNE = PCA(n_components=20).fit_transform(genotypes)
+
+WEIGHTS=(PCA(n_components=20).fit(genotypes).explained_variance_)
+print(WEIGHTS)
+
+
+def weighted_dist(a,b):
+
+    distance = math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
+    return distance
+    
+print(weighted_dist(pca_for_tSNE[0],pca_for_tSNE[50]))    
+print(weighted_dist(pca_for_tSNE[0],pca_for_tSNE[1]))    
+
+
+
+X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0).fit_transform(pca_for_tSNE) 
 #print(X_embedded.shape)   
+
+
 
 
 
@@ -92,6 +125,55 @@ colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
    
 plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
 plt.show()
+
+
+
+X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0).fit_transform(pca_for_tSNE) 
+#print(X_embedded.shape)   
+
+
+
+
+####################################################################################################################################################
+####################################################################################################################################################
+# Second version of tSNE, weighted distance
+
+X = np.asarray(genotypes)  
+pca_for_tSNE = PCA(n_components=20).fit_transform(genotypes)
+
+X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0,metric=weighted_dist()).fit_transform(pca_for_tSNE) 
+#print(X_embedded.shape)   
+
+
+
+
+
+
+
+#PLOTING
+plt.figure(figsize=(100, 60))
+
+COLORPALLETE=get_colors(len(set(true_labels)))
+COLORZ_TO_LABELS={}
+
+uniquelabels=[x for x in set(true_labels)]
+for j in range(0,len(uniquelabels)):
+    COLORZ_TO_LABELS[uniquelabels[j]]=COLORPALLETE[j]
+
+colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
+   
+plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
+plt.show()
+
+
+
+
+####################################################################################################################################################
+####################################################################################################################################################
+# Normal PCA
+
+
+
 
 
 pca = PCA(n_components=2).fit_transform(genotypes)
