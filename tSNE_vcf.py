@@ -81,6 +81,34 @@ for line in vcf:
 print(len(genotypes),len(genotypes[0]))     
 
 
+############################################################################################################$
+############################################################################################################$
+#uMAP
+
+
+UMAPPED=umap.UMAP().fit_transform(genotypes)
+
+
+
+
+
+
+
+plt.figure(figsize=(100, 60))
+
+COLORPALLETE=get_colors(len(set(true_labels)))
+COLORZ_TO_LABELS={}
+
+uniquelabels=[x for x in set(true_labels)]
+for j in range(0,len(uniquelabels)):
+    COLORZ_TO_LABELS[uniquelabels[j]]=COLORPALLETE[j]
+
+colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
+
+plt.scatter([x[0] for x in UMAPPED],[x[1] for x in UMAPPED],label=true_labels,c=colors)
+plt.show()
+
+
 
 
 ####################################################################################################################################################
