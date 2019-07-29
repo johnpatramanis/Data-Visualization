@@ -53,6 +53,10 @@ def get_colors(n):
     return colorz
 #####IIIINCOOOMPLEEEETE
 
+@numba.njit()
+def weighted_dist(a,b):
+    return math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
+
 
 
 
@@ -83,15 +87,10 @@ print(len(genotypes),len(genotypes[0]))
 
 ############################################################################################################$
 ############################################################################################################$
-#uMAP
+#uMAP generic
 
 
 UMAPPED=umap.UMAP().fit_transform(genotypes)
-
-
-
-
-
 
 
 plt.figure(figsize=(100, 60))
@@ -107,9 +106,12 @@ colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
 
 plt.scatter([x[0] for x in UMAPPED],[x[1] for x in UMAPPED],label=true_labels,c=colors)
 markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
-plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1,loc='best',ncol=3, bbox_to_anchor=(0., 0., 1, 1))
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 
 plt.show()
+####################################################################################################################################################
+####################################################################################################################################################
+
 
 
 
@@ -117,29 +119,40 @@ plt.show()
 ####################################################################################################################################################
 ####################################################################################################################################################
        
-#TRANSFORM TO tSNE
+#PCA then to uMAP
 X = np.asarray(genotypes)  
-pca_for_tSNE = PCA(n_components=20).fit_transform(genotypes)
+pca_for_uMAP = PCA(n_components=100).fit_transform(genotypes)
 
-WEIGHTS=(PCA(n_components=50).fit(genotypes).explained_variance_)
+WEIGHTS=(PCA(n_components=100).fit(genotypes).explained_variance_)
 print(WEIGHTS)
 
 
-def weighted_dist(a,b):
-
-    distance = math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
-    return distance
-    
 
 
-
-
-X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0).fit_transform(pca_for_tSNE) 
+X_embedded =UMAPPED=umap.UMAP().fit_transform(pca_for_uMAP)
 #print(X_embedded.shape)   
 
+#PLOTING
+plt.figure(figsize=(100, 60))
+
+   
+plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
+plt.show()
+
+####################################################################################################################################################
+       
+#PCA then to uMAP
+X = np.asarray(genotypes)  
+pca_for_uMAP = PCA(n_components=100).fit_transform(genotypes)
+
+WEIGHTS=(PCA(n_components=100).fit(genotypes).explained_variance_)
+print(WEIGHTS)
 
 
-
+X_embedded =UMAPPED=umap.UMAP(metric=weighted_dist).fit_transform(pca_for_uMAP)
+#print(X_embedded.shape)   
 
 #PLOTING
 plt.figure(figsize=(100, 60))
@@ -151,58 +164,52 @@ plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 plt.show()
 
 
-
-X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0).fit_transform(pca_for_tSNE) 
-#print(X_embedded.shape)   
-
-
-
-
 ####################################################################################################################################################
 ####################################################################################################################################################
-# Second version of tSNE, weighted distance
 
 X = np.asarray(genotypes)  
-pca_for_tSNE = PCA(n_components=50).fit_transform(genotypes)
+pca_for_uMAP = PCA(n_components=50).fit_transform(genotypes)
 
-X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0,metric=lambda X, Y: math.sqrt(sum([((X[x] - Y[x])*WEIGHTS[x]) ** 2 for x in range(0,len(WEIGHTS))])) ).fit_transform(pca_for_tSNE) 
-#print(X_embedded.shape)   
+WEIGHTS=(PCA(n_components=50).fit(genotypes).explained_variance_)
 
-
-
-
-
-
+X_embedded =UMAPPED=umap.UMAP().fit_transform(pca_for_uMAP)
 
 #PLOTING
-plt.figure(figsize=(100, 60))
-
-   
+plt.figure(figsize=(100, 60))  
 plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
 markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
 plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 plt.show()
 
-
-
-
 ####################################################################################################################################################
 ####################################################################################################################################################
-# Normal PCA
 
+X = np.asarray(genotypes)  
+pca_for_uMAP = PCA(n_components=20).fit_transform(genotypes)
 
+WEIGHTS=(PCA(n_components=50).fit(genotypes).explained_variance_)
 
+X_embedded =UMAPPED=umap.UMAP().fit_transform(pca_for_uMAP)
 
-
-pca = PCA(n_components=2).fit_transform(genotypes)
-
-
-plt.figure(figsize=(100, 60))
-
-   
-plt.scatter([x[0] for x in pca],[x[1] for x in pca],label=population_labels,c=colors)
+#PLOTING
+plt.figure(figsize=(100, 60))  
+plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
 markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
 plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 plt.show()
-        
-        
+####################################################################################################################################################
+####################################################################################################################################################
+
+X = np.asarray(genotypes)  
+pca_for_uMAP = PCA(n_components=10).fit_transform(genotypes)
+
+WEIGHTS=(PCA(n_components=50).fit(genotypes).explained_variance_)
+
+X_embedded =UMAPPED=umap.UMAP().fit_transform(pca_for_uMAP)
+
+#PLOTING
+plt.figure(figsize=(100, 60))  
+plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
+plt.show()
