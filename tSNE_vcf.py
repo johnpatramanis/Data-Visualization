@@ -106,6 +106,9 @@ for j in range(0,len(uniquelabels)):
 colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
 
 plt.scatter([x[0] for x in UMAPPED],[x[1] for x in UMAPPED],label=true_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
+
 plt.show()
 
 
@@ -151,6 +154,8 @@ for j in range(0,len(uniquelabels)):
 colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
    
 plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 plt.show()
 
 
@@ -190,6 +195,8 @@ for j in range(0,len(uniquelabels)):
 colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
    
 plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 plt.show()
 
 
@@ -210,6 +217,8 @@ plt.figure(figsize=(100, 60))
 
    
 plt.scatter([x[0] for x in pca],[x[1] for x in pca],label=population_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
 plt.show()
         
         
