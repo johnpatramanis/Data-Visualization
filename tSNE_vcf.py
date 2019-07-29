@@ -68,13 +68,13 @@ for line in vcf:
         line=line.strip().split()
         counter=0
         for j in line[9:]:
-            if j=='0/0':
+            if j=='0/0' or j=='0|0':
                 genotypes[counter].append(0)
-            if j=='1/0' or j=='0/1':
+            if j=='1/0' or j=='0/1' or j=='1|0' or j=='0|1':
                 genotypes[counter].append(1)
-            if j=='1/1':
+            if j=='1/1' or j=='1|1':
                 genotypes[counter].append(2)
-            if j=='./.':
+            if j=='./.' or j=='.|.':
                 genotypes[counter].append(9)
             counter+=1
 
@@ -144,14 +144,6 @@ X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perpl
 #PLOTING
 plt.figure(figsize=(100, 60))
 
-COLORPALLETE=get_colors(len(set(true_labels)))
-COLORZ_TO_LABELS={}
-
-uniquelabels=[x for x in set(true_labels)]
-for j in range(0,len(uniquelabels)):
-    COLORZ_TO_LABELS[uniquelabels[j]]=COLORPALLETE[j]
-
-colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
    
 plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
 markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
@@ -185,14 +177,6 @@ X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perpl
 #PLOTING
 plt.figure(figsize=(100, 60))
 
-COLORPALLETE=get_colors(len(set(true_labels)))
-COLORZ_TO_LABELS={}
-
-uniquelabels=[x for x in set(true_labels)]
-for j in range(0,len(uniquelabels)):
-    COLORZ_TO_LABELS[uniquelabels[j]]=COLORPALLETE[j]
-
-colors=[ COLORZ_TO_LABELS[x] for x in true_labels]
    
 plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
 markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
