@@ -112,6 +112,29 @@ plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1,loc='best',ncol=3, bbox
 plt.show()
 
 
+####################################################################################################################################################
+####################################################################################################################################################
+X = np.asarray(genotypes)  
+
+X_embedded = TSNE(verbose=0,n_components=2,learning_rate=200.0,n_iter=1000,perplexity=10.0).fit_transform(X) 
+#print(X_embedded.shape)   
+
+
+
+
+
+#PLOTING
+plt.figure(figsize=(100, 60))
+
+   
+plt.scatter([x[0] for x in X_embedded],[x[1] for x in X_embedded],label=true_labels,c=colors)
+markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in COLORZ_TO_LABELS.values()]
+plt.legend(markers, COLORZ_TO_LABELS.keys(), numpoints=1)
+plt.show()
+
+
+
+
 
 
 ####################################################################################################################################################

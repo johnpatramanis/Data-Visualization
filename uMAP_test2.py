@@ -53,7 +53,7 @@ def get_colors(n):
     return colorz
 #####IIIINCOOOMPLEEEETE
 
-@numba.njit()
+@numba.jit(nopython=False)
 def weighted_dist(a,b):
     return math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
 
@@ -129,7 +129,7 @@ print(WEIGHTS)
 
 
 
-X_embedded =UMAPPED=umap.UMAP().fit_transform(pca_for_uMAP)
+X_embedded =umap.UMAP().fit_transform(pca_for_uMAP)
 #print(X_embedded.shape)   
 
 #PLOTING

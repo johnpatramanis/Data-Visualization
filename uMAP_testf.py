@@ -217,11 +217,11 @@ pca_for_uMAP = PCA(n_components=100).fit_transform(genotypes)
 WEIGHTS=(PCA(n_components=100).fit(genotypes).explained_variance_)
 print(WEIGHTS)
 
-@numba.njit()
+@numba.jit(nopython=False)
 def weighted_dist(a,b):
 
-    distance = math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
-    return distance
+    
+    return math.sqrt(sum([((a[x] - b[x])*WEIGHTS[x]) ** 2 for x in range(0,len(a))]))
 
 
 
